@@ -11,11 +11,17 @@ import {
 } from "@/components/ui/card";
 import { Field, FieldDescription, FieldGroup } from "@/components/ui/field";
 import { authClient } from "@/lib/auth-client";
+import { ScanFace } from "lucide-react";
+import { redirect } from "next/navigation";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const { data: session, refetch } = authClient.useSession();
+  if (session) {
+    redirect("/dashboard");
+  }
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -64,6 +70,27 @@ export function LoginForm({
                     />
                   </svg>
                   Login with Microsoft
+                </Button>
+                <Button
+                  variant="outline"
+                  type="button"
+                  onClick={() => {
+                    authClient.signIn.passkey(undefined, {
+                      onSuccess: () => {
+                        refetch();
+                        console.log("Logged in with passkey");
+                      },
+                      onError: (error) => {
+                        alert(
+                          "Error logging in with passkey: " +
+                            error?.response?.body
+                        );
+                      },
+                    });
+                  }}
+                >
+                  <ScanFace />
+                  Login with Passkey
                 </Button>
               </Field>
             </FieldGroup>

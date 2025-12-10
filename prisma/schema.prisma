@@ -24,6 +24,10 @@ model User {
   sessions      Session[]
   accounts      Account[]
 
+  passkeys Passkey[]
+
+  initialized Boolean @default(false)
+
   @@unique([email])
   @@map("user")
 }
@@ -74,4 +78,23 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
+}
+
+model Passkey {
+  id           String    @id
+  name         String?
+  publicKey    String
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  credentialID String
+  counter      Int
+  deviceType   String
+  backedUp     Boolean
+  transports   String?
+  createdAt    DateTime?
+  aaguid       String?
+
+  @@index([userId])
+  @@index([credentialID])
+  @@map("passkey")
 }
