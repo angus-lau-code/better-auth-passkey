@@ -13,6 +13,7 @@ import { Field, FieldDescription, FieldGroup } from "@/components/ui/field";
 import { authClient } from "@/lib/auth-client";
 import { ScanFace } from "lucide-react";
 import { redirect } from "next/navigation";
+import { toast } from "sonner";
 
 export function LoginForm({
   className,
@@ -81,9 +82,8 @@ export function LoginForm({
                         console.log("Logged in with passkey");
                       },
                       onError: (error) => {
-                        alert(
-                          "Error logging in with passkey: " +
-                            error?.response?.body
+                        toast.error(
+                          `Error logging in with passkey: ${error.error.message}`
                         );
                       },
                     });
